@@ -3,7 +3,7 @@ import logo from '../../assets/img/facebook.png'
 import {FacebookAuthProvider, getAuth} from 'firebase/auth'
 import {useSignInWithFacebook} from 'react-firebase-hooks/auth'
 
-import { LoginButton, LoginContainer, ProviderLogo, SignInText } from './styles'
+import { ErrorMessage, InfoMessage, LoginButton, LoginContainer, ProviderLogo, SignInText } from './styles'
 import { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../context/UserContext'
 import firebaseApp from '../../config/firebase'
@@ -38,7 +38,7 @@ const Login = () => {
     const token = credentials?.accessToken
     const {user} =facebookUserCredentials
     const userName = user.displayName
-    const profilePic = user.photoURL
+    const profilePic = `${user.photoURL}?access_token=${token}`
 
     if(token){
       setToken(token)
@@ -53,15 +53,21 @@ const Login = () => {
 
    if(facebookError){
     console.log(facebookError)
+    
    }
 
   return (
-    <LoginContainer>
+   <>
+   <LoginContainer>
       <LoginButton onClick={() => signInWithFacebook()}>
         <ProviderLogo src={logo} alt='Facebook' />
         <SignInText>Entrar com Facebook</SignInText>
       </LoginButton>
     </LoginContainer>
+      {facebookError && (<ErrorMessage>Erro Ao Tentar Autenticar</ErrorMessage>)}
+      {facebookLoading && (<InfoMessage>Certo</InfoMessage>)}
+  </>
+    
   )
 }
 
